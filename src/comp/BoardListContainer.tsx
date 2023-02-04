@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import {Board} from "./api/Board";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BoardType} from "./api/BoardType";
 import {useNavigate, useParams} from "react-router-dom";
 
 interface Props {
@@ -23,14 +22,24 @@ export const BoardListContainer = (
         return res.data;
     }
 
+    const onClickForm = () => {
+        //
+        navigate(`/board/form/${boardType}`);
+    }
+
+    const onClickDetail = (boardId: string) => {
+        //
+        navigate(`/board/detail/${boardType}/${boardId}`);
+    }
+
     useEffect(() => {
         findBoardList().then(res => setBoardList(res));
     }, [boardType]);
 
     return (
         <>
-            <span>{boardType}</span>
-            <button onClick={() => navigate("/board/form")}>글쓰기</button>
+            <h1 className="fw-bold">{boardType}</h1>
+            <button onClick={onClickForm}>글쓰기</button>
             <table className="table table-sm">
                 <thead>
                 <tr>
@@ -43,7 +52,7 @@ export const BoardListContainer = (
                 <tbody className="table-group-divider">
                 {boardList.map((value) =>
                     <tr>
-                        <td onClick={ () => navigate("/board/modify")}>{value.title}</td>
+                        <td onClick={()=>onClickDetail(value.boardId)}>{value.title}</td>
                         <td>{value.user.name}</td>
                         <td>{value.registerTime}</td>
                         <td>{value.sequence}</td>
@@ -51,7 +60,7 @@ export const BoardListContainer = (
                 )}
                 </tbody>
             </table>
-            <button>글쓰기</button>
+            <button onClick={onClickForm}>글쓰기</button>
         </>
     )
 }

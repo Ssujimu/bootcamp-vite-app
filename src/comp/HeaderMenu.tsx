@@ -6,7 +6,7 @@ export const HeaderMenu = () => {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div className="collapse navbar-collapse" id="navbarText">
-                <ul className="navbar-nav me-auto">
+                <ul className="navbar-nav me-auto fw-bold">
                     <li className="nav-item">
                         <a className="nav-link" onClick={() => navigate('/board/Normal')}>Normal</a>
                     </li>
