@@ -3,6 +3,6 @@ export type IdName = {
     name: string;
 }
 
-export const userIdName = (id = 'suji', name = '나다') => {
+export const userIdName = (id = '', name = '') => {
     return { id, name } as IdName;
 }

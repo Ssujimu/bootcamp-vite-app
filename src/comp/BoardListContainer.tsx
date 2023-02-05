@@ -1,8 +1,9 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Board} from "./api/Board";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {useNavigate, useParams} from "react-router-dom";
+import {UserContext} from "./api/UserContext";
 
 interface Props {
 }
@@ -13,6 +14,7 @@ export const BoardListContainer = (
 
     const [boardList, setBoardList] = useState<Board[]>([]);
     const navigate = useNavigate();
+    const { userData } = useContext(UserContext);
     const { boardType = 'Normal' } = useParams<string>();
 
     const findBoardList = async (): Promise<Board[]> => {
@@ -24,7 +26,14 @@ export const BoardListContainer = (
 
     const onClickForm = () => {
         //
-        navigate(`/board/form/${boardType}`);
+        if (userData.id.length) {
+            // 로그인한 자
+            navigate(`/board/form/${boardType}`);
+        } else {
+            // 비로그인자
+            alert("로그인 필요");
+            navigate(`/login`);
+        }
     }
 
     const onClickDetail = (boardId: string) => {

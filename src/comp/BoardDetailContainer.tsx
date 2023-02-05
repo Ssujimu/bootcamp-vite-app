@@ -1,22 +1,18 @@
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Board} from "./api/Board";
 import {BoardCreate} from "./api/BoardCreate";
-import {IdName} from "./api/types";
+import {IdName, userIdName} from "./api/types";
 import {BoardType} from "./api/BoardType";
 import {BoardUpdate} from "./api/BoardUpdate";
+import {UserContext} from "./api/UserContext";
 
-interface Props {
-    user: IdName;
-}
 
-export const BoardDetailContainer = (
-    {
-        user,
-    }:Props) => {
+export const BoardDetailContainer = () => {
     //
     const navigate = useNavigate();
+    const { userData } = useContext(UserContext);
     const { boardType = 'Normal', boardId } = useParams<string>();
     const [ board, setBoard ] = useState<Board | null>(null);
 
@@ -31,7 +27,7 @@ export const BoardDetailContainer = (
         if (boardId && boardId.length) {
             findBoardByBoardId();
         } else {
-            setBoard(new Board('', '', '', user, '', 0));
+            setBoard(new Board('', '', '', userIdName(userData.id, userData.name), '', 0));
         }
     }, [boardId])
 
@@ -51,8 +47,14 @@ export const BoardDetailContainer = (
     }
 
     const onClickSubmit = () => {
+        //
         // 생성 버튼 클릭시 작동하는 함수 위에 있는 register함수가 호출되야 할까요...?(이부분은 고민해보세요)
-        register().then(() => navigate(`/board/${boardType}`));
+        if (boardId?.length) {
+            navigate(`/board/form/${boardType}`)
+        }
+        else {
+            register().then(() => navigate(`/board/${boardType}`));
+        }
     }
 
     const onClickUpdate = () => {
@@ -89,7 +91,7 @@ export const BoardDetailContainer = (
                                     value는 왜 지정했고
                                     onChange 메서드는 왜 만들어서 넣어줬는지
                                 */}
-                                <input type="text" className="form-control" placeholder="제목을 입력해 주세요." name='title' value={board.title} onChange={(event)=>{
+                                <input type="text" className="form-control" placeholder="제목을 입력해 주세요." disabled={!userData.id.length && userData.id === board.user.id} name='title' value={board.title} onChange={(event)=>{
                                     onChange(event.target.name, event.target.value);
                                 }}/>
                             </td>
@@ -113,7 +115,7 @@ export const BoardDetailContainer = (
                         }
                         <tr>
                             <td colSpan={3}>
-                                <textarea className="form-control" placeholder="내용을 입력해 주세요." style={{height: '50vh'}}  name='content' value={board.content}
+                                <textarea className="form-control" placeholder="내용을 입력해 주세요." disabled={!userData.id.length && userData.id === board.user.id} style={{height: '50vh'}}  name='content' value={board.content}
                                           onChange={(event)=>{
                                               onChange(event.target.name, event.target.value);
                                           }}/>
@@ -122,7 +124,7 @@ export const BoardDetailContainer = (
                         </tbody>
                         <div className="row justify-content-evenly">
                             {
-                                boardId ?
+                                boardId && (userData.id === board.user.id) ?
                                     <>
                                         <div className="col-4">
                                             <button onClick={onClickUpdate}>수정</button>
